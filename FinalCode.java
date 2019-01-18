@@ -101,7 +101,7 @@ import java.util.List;
 
 @TeleOp(name="Concept: Vuforia Rover Nan", group ="Concept")
 //@Disabled
-public class ImageFinder extends LinearOpMode {
+public class FinalCode extends LinearOpMode {
 
     /*
      * IMPORTANT: You need to obtain your own license key to use Vuforia. The string below with which
@@ -134,7 +134,8 @@ public class ImageFinder extends LinearOpMode {
      */
     VuforiaLocalizer vuforia;
 
-    @Override public void runOpMode() {
+    @Override
+    public void runOpMode() {
         /*
          * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
          * We can pass Vuforia the handle to a camera preview resource (on the RC phone);
@@ -145,8 +146,8 @@ public class ImageFinder extends LinearOpMode {
 
         // VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
 
-        parameters.vuforiaLicenseKey = VUFORIA_KEY ;
-        parameters.cameraDirection   = CAMERA_CHOICE;
+        parameters.vuforiaLicenseKey = VUFORIA_KEY;
+        parameters.cameraDirection = CAMERA_CHOICE;
 
         //  Instantiate the Vuforia engine
         vuforia = ClassFactory.getInstance().createVuforia(parameters);
@@ -257,17 +258,24 @@ public class ImageFinder extends LinearOpMode {
             // check all the trackable target to see which one (if any) is visible.
             targetVisible = false;
             for (VuforiaTrackable trackable : allTrackables) {
-                if (((VuforiaTrackableDefaultListener)trackable.getListener()).isVisible()) {
+                if (((VuforiaTrackableDefaultListener) trackable.getListener()).isVisible()) {
                     telemetry.addData("Visible Target", trackable.getName());
                     targetVisible = true;
 
                 }
 
-                if (targetVisible){
+
+                if (targetVisible) {
                     telemetry.addData("Visible Targets", "None");
 
-                    if (trackable.getName() == "Blue-Rover" ){
 
+
+
+
+
+
+                    //will see Blue Rover if it on the bottom blue line
+                    if (trackable.getName() == "Blue-Rover") {
 
 
                         ElapsedTime runtime = new ElapsedTime();
@@ -285,7 +293,7 @@ public class ImageFinder extends LinearOpMode {
                         // configuring all the vars to actual parts on the robot
                         // if trying to set up configs on phone use the names given in the green " " marks
 
-                        colorSensorLeft =  hardwareMap.colorSensor.get("Color_Sensor_Left");
+                        colorSensorLeft = hardwareMap.colorSensor.get("Color_Sensor_Left");
                         colorSensorRight = hardwareMap.colorSensor.get("Color_Sensor_Right");
 
                         leftDrive = hardwareMap.dcMotor.get("Left_Drive");
@@ -351,12 +359,93 @@ public class ImageFinder extends LinearOpMode {
                             leftDrive.setPower(0); //power given
                             rightDrive.setPower(.5); //power given
                             sleep(3000); // amount of time it turns for
+
+
+
+                            while (digitalTouchLeft.getState() == true && digitalTouchRight.getState() == true) {
+                                telemetry.addData("Digital Touch Sensors", "Both are not pressed");
+                                leftDrive.setPower(1.00);
+                                rightDrive.setPower(1.00);
+                                telemetry.update();
+                            }
+                            while (digitalTouchLeft.getState() == false && digitalTouchRight.getState() == true) {
+                                telemetry.addData("Digital Touch Sensors", "Left touch is only being pressed");
+                                leftDrive.setPower(0);
+                                rightDrive.setPower(1.00);
+                                telemetry.update();
+                            }
+                            while (digitalTouchLeft.getState() == true && digitalTouchRight.getState() == false) {
+                                telemetry.addData("Digital Touch Sensors", "Right touch is only being pressed");
+                                leftDrive.setPower(1.00);
+                                rightDrive.setPower(0);
+                                telemetry.update();
+                            }
+
+                            while (digitalTouchLeft.getState() == false && digitalTouchRight.getState() == false){
+                                telemetry.addData(" Digital Touch Sensors", "Both are pressed");
+                                // for single touch sensor
+                                double power = 0;
+                                leftDrive.setPower(power);
+                                rightDrive.setPower(power);
+                                telemetry.update();
+                                break;
+                            }
+                            // this fully aligns the robot to the wall.
+                            leftDrive.setPower(1.00);
+                            rightDrive.setPower(1.00);
+                            sleep (300);
+                            leftDrive.setPower(0.00);
+                            rightDrive.setPower(0.00);
+                            sleep (500);
+
+                            //backing up and turning
+                            leftDrive.setPower(-1.00); //full power backwards
+                            rightDrive.setPower(-1.00); //full power backwards
+                            sleep(300); //  3/10's of a second going bacwards
+                            leftDrive.setPower(-1.00); //full power backwards
+                            rightDrive.setPower(0);
+                            sleep(2000); // 2 full seconds for turn
+
+                            //idk what the 50 should be.
+                            // this moves
+                            if (colorSensorLeft.blue()<= 50 && colorSensorRight.blue()<= 50) {
+
+                                double moveForward = 1.00;
+
+                                leftDrive.setPower(moveForward);
+                                rightDrive.setPower(moveForward);
+
+                            }
+
+                            double stop = 0.00;
+                            leftDrive.setPower(stop);
+                            rightDrive.setPower(stop);
+
+                            // then input the code for flag drop
+
+                            double moveBack = -1.00;
+                            leftDrive.setPower(moveBack);
+                            rightDrive.setPower(moveBack);
+                            sleep(10000000); //idk how long its should go
+
+
+
                         }
 
 
                     }
 
-                    if (targetsRoverRuckus.getName() == "Red-Footprint" ){
+
+
+
+
+
+
+
+
+
+                    //will see Red Footprint if it on the bottom red line
+                    if (targetsRoverRuckus.getName() == "Red-Footprint") {
 
 
                         DcMotor leftDrive;
@@ -372,7 +461,7 @@ public class ImageFinder extends LinearOpMode {
                         // configuring all the vars to actual parts on the robot
                         // if trying to set up configs on phone use the names given in the green " " marks
 
-                        colorSensorLeft =  hardwareMap.colorSensor.get("Color_Sensor_Left");
+                        colorSensorLeft = hardwareMap.colorSensor.get("Color_Sensor_Left");
                         colorSensorRight = hardwareMap.colorSensor.get("Color_Sensor_Right");
 
                         leftDrive = hardwareMap.dcMotor.get("Left_Drive");
@@ -440,10 +529,89 @@ public class ImageFinder extends LinearOpMode {
                             rightDrive.setPower(.5); //power given
                             sleep(3000); // amount of time it turns for
 
+
+
+
+                            while (digitalTouchLeft.getState() == true && digitalTouchRight.getState() == true) {
+                                telemetry.addData("Digital Touch Sensors", "Both are not pressed");
+                                leftDrive.setPower(1.00);
+                                rightDrive.setPower(1.00);
+                                telemetry.update();
+                            }
+                            while (digitalTouchLeft.getState() == false && digitalTouchRight.getState() == true) {
+                                telemetry.addData("Digital Touch Sensors", "Left touch is only being pressed");
+                                leftDrive.setPower(0);
+                                rightDrive.setPower(1.00);
+                                telemetry.update();
+                            }
+                            while (digitalTouchLeft.getState() == true && digitalTouchRight.getState() == false) {
+                                telemetry.addData("Digital Touch Sensors", "Right touch is only being pressed");
+                                leftDrive.setPower(1.00);
+                                rightDrive.setPower(0);
+                                telemetry.update();
+                            }
+
+                            while (digitalTouchLeft.getState() == false && digitalTouchRight.getState() == false){
+                                telemetry.addData(" Digital Touch Sensors", "Both are pressed");
+                                // for single touch sensor
+                                double power = 0;
+                                leftDrive.setPower(power);
+                                rightDrive.setPower(power);
+                                telemetry.update();
+                                break;
+                            }
+                            // this fully aligns the robot to the wall.
+                            leftDrive.setPower(1.00);
+                            rightDrive.setPower(1.00);
+                            sleep (500);
+                            leftDrive.setPower(0.00);
+                            rightDrive.setPower(0.00);
+                            sleep (500);
+
+                            //backing up and turning
+                            leftDrive.setPower(-1.00); //full power backwards
+                            rightDrive.setPower(-1.00); //full power backwards
+                            sleep(300); //  3/10's of a second going bacwards
+                            leftDrive.setPower(-1.00); //full power backwards
+                            rightDrive.setPower(0);
+                            sleep(2000); // 2 full seconds for turn
+
+                            //idk what the 50 should be.
+                            // this moves until line
+                            if (colorSensorLeft.red()<= 50 && colorSensorRight.red()<= 50) {
+
+                                double moveForward = 1.00;
+
+                                leftDrive.setPower(moveForward);
+                                rightDrive.setPower(moveForward);
+
+                            }
+
+                            double stop = 0.00;
+                            leftDrive.setPower(stop);
+                            rightDrive.setPower(stop);
+
+                            // then input the code for flag drop
+
+                            double moveBack = -1.00;
+                            leftDrive.setPower(moveBack);
+                            rightDrive.setPower(moveBack);
+                            sleep(10000000); //idk how long its should go
+
                         }
 
                     }
-                    if (targetsRoverRuckus.getName() == "Front-Craters"){
+
+
+
+
+
+
+
+
+
+                    //will see Front Crater if it on the top red line
+                    if (targetsRoverRuckus.getName() == "Front-Craters") {
 
 
                         DcMotor leftDrive;
@@ -459,7 +627,7 @@ public class ImageFinder extends LinearOpMode {
                         // configuring all the vars to actual parts on the robot
                         // if trying to set up configs on phone use the names given in the green " " marks
 
-                        colorSensorLeft =  hardwareMap.colorSensor.get("Color_Sensor_Left");
+                        colorSensorLeft = hardwareMap.colorSensor.get("Color_Sensor_Left");
                         colorSensorRight = hardwareMap.colorSensor.get("Color_Sensor_Right");
 
                         leftDrive = hardwareMap.dcMotor.get("Left_Drive");
@@ -524,11 +692,92 @@ public class ImageFinder extends LinearOpMode {
                             leftDrive.setPower(0); //power given
                             rightDrive.setPower(.5); //power given
                             sleep(3000); // amount of time it turns for
+
+
+
+                            while (digitalTouchLeft.getState() == true && digitalTouchRight.getState() == true) {
+                                telemetry.addData("Digital Touch Sensors", "Both are not pressed");
+                                leftDrive.setPower(1.00);
+                                rightDrive.setPower(1.00);
+                                telemetry.update();
+                            }
+                            while (digitalTouchLeft.getState() == false && digitalTouchRight.getState() == true) {
+                                telemetry.addData("Digital Touch Sensors", "Left touch is only being pressed");
+                                leftDrive.setPower(0);
+                                rightDrive.setPower(1.00);
+                                telemetry.update();
+                            }
+                            while (digitalTouchLeft.getState() == true && digitalTouchRight.getState() == false) {
+                                telemetry.addData("Digital Touch Sensors", "Right touch is only being pressed");
+                                leftDrive.setPower(1.00);
+                                rightDrive.setPower(0);
+                                telemetry.update();
+                            }
+
+                            while (digitalTouchLeft.getState() == false && digitalTouchRight.getState() == false){
+                                telemetry.addData(" Digital Touch Sensors", "Both are pressed");
+                                // for single touch sensor
+                                double power = 0;
+                                leftDrive.setPower(power);
+                                rightDrive.setPower(power);
+                                telemetry.update();
+                                break;
+                            }
+
+                            // this fully aligns the robot to the wall.
+                            leftDrive.setPower(1.00);
+                            rightDrive.setPower(1.00);
+                            sleep (500);
+                            leftDrive.setPower(0.00);
+                            rightDrive.setPower(0.00);
+                            sleep (500);
+
+                            //backing up and turning
+                            leftDrive.setPower(-1.00); //full power backwards
+                            rightDrive.setPower(-1.00); //full power backwards
+                            sleep(300); //  3/10's of a second going bacwards
+                            leftDrive.setPower(-1.00); //full power backwards
+                            rightDrive.setPower(0);
+                            sleep(2000); // 2 full seconds for turn
+
+                            //idk what the 50 should be.
+                            // this moves
+                            if (colorSensorLeft.blue()<= 50 && colorSensorRight.blue()<= 50) {
+
+                                double moveForward = 1.00;
+
+                                leftDrive.setPower(moveForward);
+                                rightDrive.setPower(moveForward);
+
+                            }
+
+                            double stop = 0.00;
+                            leftDrive.setPower(stop);
+                            rightDrive.setPower(stop);
+
+                            // then input the code for flag drop
+
+                            double moveBack = -1.00;
+                            leftDrive.setPower(moveBack);
+                            rightDrive.setPower(moveBack);
+                            sleep(10000000); //idk how long its should go
+
                         }
 
 
                     }
-                    if (targetsRoverRuckus.getName() == "Back-Space"){
+
+
+
+
+
+
+
+
+
+
+                    //will see Back Space if it on the bottom blue line
+                    if (targetsRoverRuckus.getName() == "Back-Space") {
 
 
                         DcMotor leftDrive;
@@ -544,13 +793,12 @@ public class ImageFinder extends LinearOpMode {
                         // configuring all the vars to actual parts on the robot
                         // if trying to set up configs on phone use the names given in the green " " marks
 
-                        colorSensorLeft =  hardwareMap.colorSensor.get("Color_Sensor_Left");
+                        colorSensorLeft = hardwareMap.colorSensor.get("Color_Sensor_Left");
                         colorSensorRight = hardwareMap.colorSensor.get("Color_Sensor_Right");
 
                         leftDrive = hardwareMap.dcMotor.get("Left_Drive");
                         rightDrive = hardwareMap.dcMotor.get("Right_Drive");
                         rightDrive.setDirection(DcMotor.Direction.REVERSE);
-
 
 
                         digitalTouchLeft = hardwareMap.get(DigitalChannel.class, "sensor_digital_left");
@@ -613,15 +861,82 @@ public class ImageFinder extends LinearOpMode {
                             rightDrive.setPower(.5); //power given
                             sleep(3000); // amount of time it turns for
 
+
+                            while (digitalTouchLeft.getState() == true && digitalTouchRight.getState() == true) {
+                                telemetry.addData("Digital Touch Sensors", "Both are not pressed");
+                                leftDrive.setPower(1.00);
+                                rightDrive.setPower(1.00);
+                                telemetry.update();
+                            }
+                            while (digitalTouchLeft.getState() == false && digitalTouchRight.getState() == true) {
+                                telemetry.addData("Digital Touch Sensors", "Left touch is only being pressed");
+                                leftDrive.setPower(0);
+                                rightDrive.setPower(1.00);
+                                telemetry.update();
+                            }
+                            while (digitalTouchLeft.getState() == true && digitalTouchRight.getState() == false) {
+                                telemetry.addData("Digital Touch Sensors", "Right touch is only being pressed");
+                                leftDrive.setPower(1.00);
+                                rightDrive.setPower(0);
+                                telemetry.update();
+                            }
+
+                            while (digitalTouchLeft.getState() == false && digitalTouchRight.getState() == false){
+                                telemetry.addData(" Digital Touch Sensors", "Both are pressed");
+                                // for single touch sensor
+                                double power = 0;
+                                leftDrive.setPower(power);
+                                rightDrive.setPower(power);
+                                telemetry.update();
+                                break;
+                            }
+                        // this fully aligns the robot to the wall.
+                            leftDrive.setPower(1.00);
+                            rightDrive.setPower(1.00);
+                            sleep (500);
+                            leftDrive.setPower(0.00);
+                            rightDrive.setPower(0.00);
+                            sleep (500);
+
+                            //backing up and turning
+                            leftDrive.setPower(-1.00); //full power backwards
+                            rightDrive.setPower(-1.00); //full power backwards
+                            sleep(300); //  3/10's of a second going bacwards
+                            leftDrive.setPower(-1.00); //full power backwards
+                            rightDrive.setPower(0);
+                            sleep(2000); // 2 full seconds for turn
+
+                            //idk what the 50 should be.
+                            // this moves
+                            if (colorSensorLeft.blue()<= 50 && colorSensorRight.blue()<= 50) {
+
+                                double moveForward = 1.00;
+
+                                leftDrive.setPower(moveForward);
+                                rightDrive.setPower(moveForward);
+
+                            }
+
+                            double stop = 0.00;
+                            leftDrive.setPower(stop);
+                            rightDrive.setPower(stop);
+
+                            // then input the code for flag drop
+
+                            double moveBack = -1.00;
+                            leftDrive.setPower(moveBack);
+                            rightDrive.setPower(moveBack);
+                            sleep(10000000); //idk how long its should go
+
+
                         }
 
                     }
+                }
+
+
+                telemetry.update();
             }
-
-
-
-
-            telemetry.update();
         }
     }
 }
