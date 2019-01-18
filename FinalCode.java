@@ -255,6 +255,7 @@ public class FinalCode extends LinearOpMode {
         targetsRoverRuckus.activate();
         while (opModeIsActive()) {
 
+
             // check all the trackable target to see which one (if any) is visible.
             targetVisible = false;
             for (VuforiaTrackable trackable : allTrackables) {
@@ -263,6 +264,22 @@ public class FinalCode extends LinearOpMode {
                     targetVisible = true;
 
                 }
+
+
+
+                
+
+                //Code for dropping robot, change if needed
+                DcMotor elevator;
+                elevator = hardwareMap.dcMotor.get("elevator");
+                elevator.setPower(1.00);
+                sleep(101010); //change this to whatever you need it to be
+                elevator.setPower(0.00);
+
+
+
+
+
 
 
                 if (targetVisible) {
@@ -283,6 +300,8 @@ public class FinalCode extends LinearOpMode {
                         DcMotor leftDrive;
                         DcMotor rightDrive;
 
+                        //DcMotor flagDrop; //change this to servo motor if needed
+
                         ColorSensor colorSensorLeft = null;  // First Hardware Device Object
                         ColorSensor colorSensorRight = null;  // Second Hardware Device Object
 
@@ -298,6 +317,8 @@ public class FinalCode extends LinearOpMode {
 
                         leftDrive = hardwareMap.dcMotor.get("Left_Drive");
                         rightDrive = hardwareMap.dcMotor.get("Right_Drive");
+
+                        //flagDrop = hardwareMap.dcMotor.get("flagDrop")
 
                         rightDrive.setDirection(DcMotor.Direction.REVERSE);
 
@@ -427,6 +448,8 @@ public class FinalCode extends LinearOpMode {
                             leftDrive.setPower(moveBack);
                             rightDrive.setPower(moveBack);
                             sleep(10000000); //idk how long its should go
+
+
 
 
 
